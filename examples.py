@@ -2,6 +2,10 @@ from amnesiac import cache
 from time import time, sleep
 
 
+################################
+# Basic usage with functions ###
+################################
+
 @cache
 def slowGreetingGenerator(fname, lname, *args, **kwargs):
     sleep(3)
@@ -16,6 +20,29 @@ start = time()
 print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34))
 print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
 
+
+############
+# With TTL #
+############
+
+@cache(ttl_minutes=10)
+def slowGreetingGenerator(fname, lname, *args, **kwargs):
+    sleep(3)
+    return f'Hello, {fname} {lname}'
+
+
+start = time()
+print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34))
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # First call is slow
+
+start = time()
+print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34))
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
+
+
+################
+# With methods #
+################
 
 class Fetcher:
     @cache
