@@ -1,0 +1,1 @@
+from .amnesic import cache
