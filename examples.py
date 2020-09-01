@@ -1,4 +1,4 @@
-from amnesic import cache
+from amnesiac import cache
 from time import time, sleep
 
 
@@ -10,31 +10,31 @@ def slowGreetingGenerator(fname, lname, *args, **kwargs):
 
 start = time()
 print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34))
-print(time() - start)  # First call is slow
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # First call is slow
 
 start = time()
 print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34))
-print(time() - start)  # Second call is fast
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
 
 
 class Fetcher:
     @cache
     def fetch_stuffs(self, stuffs_location):
         sleep(3)  # Doing slow fetching
-        return 'data'
+        return 'Fetched data'
 
 
 a = Fetcher()
 start = time()
-print(a.slowFunc('over there'))
-print(time() - start)  # First call is slow
+print(a.fetch_stuffs('over there'))
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # First call is slow
 
 start = time()
-print(a.slowFunc('over there'))
-print(time() - start)  # Second call is fast
+print(a.fetch_stuffs('over there'))
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
 
 
 b = Fetcher()
 start = time()
-print(b.slowFunc('over there'))
-print(time() - start)  # Slow. Cache deliberately not used as b != a
+print(b.fetch_stuffs('over there'))
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Slow. Cache deliberately not used as b != a
