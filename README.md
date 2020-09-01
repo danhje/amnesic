@@ -1,2 +1,2 @@
-# amnesic
-Memoization for Python, with optional TTL (measured in time or function calls) for the cached results.
+# amnesiac
+Memoization decorator for Python, with optional TTL (measured in time or function calls) for the cached results.
