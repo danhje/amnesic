@@ -1,5 +1,5 @@
 """
-Memoization for Python, with optional TTL (measured in time or function call count  ) for the cached results.
+Memoization for Python, with optional TTL (measured in time or function call count) for the cached results.
 """
 
 

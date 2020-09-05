@@ -1,4 +1,4 @@
-from amnesiac import cache
+from thymesis import cache
 from time import time, sleep
 
 
