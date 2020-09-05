@@ -1,1 +1,1 @@
-from .thymesis import memoize
+from .thymesis import memoize, TTLUnit
