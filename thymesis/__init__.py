@@ -1,1 +1,1 @@
-from .thymesis import cache
+from .thymesis import memoize
