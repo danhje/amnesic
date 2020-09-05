@@ -1,4 +1,4 @@
-from thymesis import cache
+from thymesis import memoize
 from time import time, sleep
 
 
@@ -6,7 +6,7 @@ from time import time, sleep
 # Basic usage with functions ###
 ################################
 
-@cache
+@memoize
 def slowGreetingGenerator(fname, lname, *args, **kwargs):
     sleep(3)
     return f'Hello, {fname} {lname}'
@@ -25,7 +25,7 @@ print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
 # With TTL #
 ############
 
-@cache(ttl_minutes=10)
+@memoize(ttl_minutes=10)
 def slowGreetingGenerator(fname, lname, *args, **kwargs):
     sleep(3)
     return f'Hello, {fname} {lname}'
@@ -45,7 +45,7 @@ print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
 ################
 
 class Fetcher:
-    @cache
+    @memoize
     def fetch_stuffs(self, stuffs_location):
         sleep(3)  # Doing slow fetching
         return 'Fetched data'
