@@ -1,4 +1,4 @@
-from thymesis import memoize
+from thymesis import memoize, TTLUnit
 from time import time, sleep
 
 
@@ -8,7 +8,7 @@ from time import time, sleep
 
 @memoize
 def slowGreetingGenerator(fname, lname, *args, **kwargs):
-    sleep(3)
+    sleep(1)
     return f'Hello, {fname} {lname}'
 
 
@@ -19,15 +19,19 @@ print(f'Time elapsed: {time() - start :.1f} seconds\n')  # First call is slow
 start = time()
 print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34))
 print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
+
+start = time()
+print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=35))
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Slow, as one attribute has changed
 
 
 ############
 # With TTL #
 ############
 
-@memoize(ttl_minutes=10)
+@memoize(ttl=1, ttl_unit=TTLUnit.CALL_COUNT)
 def slowGreetingGenerator(fname, lname, *args, **kwargs):
-    sleep(3)
+    sleep(1)
     return f'Hello, {fname} {lname}'
 
 
@@ -38,6 +42,10 @@ print(f'Time elapsed: {time() - start :.1f} seconds\n')  # First call is slow
 start = time()
 print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34))
 print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
+
+start = time()
+print(slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34))
+print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Third call is slow again, as cache expired
 
 
 ################
@@ -47,7 +55,7 @@ print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
 class Fetcher:
     @memoize
     def fetch_stuffs(self, stuffs_location):
-        sleep(3)  # Doing slow fetching
+        sleep(1)  # Doing slow fetching
         return 'Fetched data'
 
 
@@ -59,7 +67,6 @@ print(f'Time elapsed: {time() - start :.1f} seconds\n')  # First call is slow
 start = time()
 print(a.fetch_stuffs('over there'))
 print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Second call is fast
-
 
 b = Fetcher()
 start = time()
