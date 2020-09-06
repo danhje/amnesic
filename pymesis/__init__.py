@@ -7,7 +7,7 @@ __author__ = 'Daniel Hjertholm'
 __version__ = '0.0.1'
 
 
-from .thymesis import memoize, TTLUnit
+from .pymesis import memoize, TTLUnit
 
 
 __all__ = (memoize, TTLUnit)
