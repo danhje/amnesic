@@ -1,10 +1,10 @@
-# thymesis
+# pymesis
 Memoization decorator for Python, with optional TTL (measured in time or function calls) for the cached results.
 
 ## Installation
 ```
-git clone https://github.com/danhje/thymesis.git
-cd thymesis
+git clone https://github.com/danhje/pymesis.git
+cd pymesis
 pipenv install
 ```
 
@@ -13,7 +13,7 @@ pipenv install
 Basic usage:
 
 ```
-from thymesis import memoize
+from pymesis import memoize
 from time import time, sleep
 
 @memoize
@@ -37,7 +37,7 @@ print(f'Time elapsed: {time() - start :.1f} seconds\n')  # This call is slow, as
 With TTL:
 
 ```
-from thymesis import memoize, TTLUnit
+from pymesis import memoize, TTLUnit
 from time import time, sleep
 
 @memoize(ttl=1, ttl_unit=TTLUnit.CALL_COUNT) # Only return cached result once, then go back to calling flowFunction
