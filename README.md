@@ -2,11 +2,19 @@
 Memoization decorator for Python, with optional TTL (measured in time or function calls) for the cached results.
 
 ## Installation
+
+Using pipenv (recommended):
+
 ```
-git clone https://github.com/danhje/pymesis.git
-cd pymesis
-pipenv install
+pipenv install pymesis
 ```
+
+Using pip:
+
+```
+pip install pymesis
+```
+
 
 ## Usage
 
