@@ -71,6 +71,9 @@ def memoize(func=None, ttl=None, ttl_unit=None):
         return memoized_func
     else:
         def decorator(func):
+            if ttl <= 0:  # No decorating needed
+                return func
+
             def memoized_func(*args, **kwargs):
                 invocation_string = '~'.join((
                     func.__name__,

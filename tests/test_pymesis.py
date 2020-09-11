@@ -49,3 +49,21 @@ def test_memoization_decorator_ttl_count():
 
     assert first == second == third
     assert get_data.call_count == 2
+
+
+def test_memoization_decorator_ttl_count_0():
+    pymesis_cache.clear_cache()
+
+    get_data = Mock()
+    get_data.return_value = 'data'
+
+    @memoize(ttl=0, ttl_unit=TTLUnit.CALL_COUNT)
+    def func(param):
+        return get_data()
+
+    first = func('arg')
+    second = func('arg')
+    third = func('arg')
+
+    assert first == second == third
+    assert get_data.call_count == 3
