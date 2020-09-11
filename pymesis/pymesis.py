@@ -46,6 +46,9 @@ class Cache(dict):
         else:
             raise ValueError(f'Unknown ttl_unit: {dataobj["ttl_unit"]}')
 
+    def clear_cache(self):
+        self.clear()
+
 
 this = modules[__name__]
 this._cache = Cache()
@@ -86,19 +89,6 @@ def memoize(func=None, ttl=None, ttl_unit=None):
 
 if __name__ == '__main__':
     from time import time, sleep
-
-    @memoize
-    def slow_greeting_generator(fname, lname, *args, **kwargs):
-        sleep(1)
-        return f'Hello, {fname} {lname}'
-
-    start = time()
-    slow_greeting_generator('Daniel', 'Hjertholm', 'Developer', age=34)
-    assert(time() - start >= 1)
-
-    start = time()
-    slow_greeting_generator('Daniel', 'Hjertholm', 'Developer', age=34)
-    assert(time() - start < 1)
 
     @memoize(ttl=1, ttl_unit=TTLUnit.CALL_COUNT)
     def slow_greeting_generator_2(fname, lname, *args, **kwargs):
