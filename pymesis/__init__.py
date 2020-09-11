@@ -4,7 +4,7 @@ Memoization for Python, with optional TTL (measured in time or function call cou
 
 
 __author__ = 'Daniel Hjertholm'
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 
 from .pymesis import memoize, TTLUnit, _cache
