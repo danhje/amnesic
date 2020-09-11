@@ -15,7 +15,7 @@ class TTLUnit(Enum):
 
 
 class Cache(dict):
-    def addData(self, hash, data, ttl=None, ttl_unit=TTLUnit.SECONDS):
+    def add_data(self, hash, data, ttl=None, ttl_unit=TTLUnit.SECONDS):
         dataobj = {'data': data}
         if ttl is not None and ttl_unit is not None:
             dataobj['ttl'] = ttl
@@ -24,7 +24,7 @@ class Cache(dict):
             dataobj['timestamp'] = time()
         self[hash] = dataobj
 
-    def getDataIfCached(self, hash):
+    def get_data_if_cached(self, hash):
         if hash not in self:
             return None
         dataobj = self[hash]
@@ -60,10 +60,10 @@ def memoize(func=None, ttl=None, ttl_unit=None):
                 '~'.join((f'{str(k)}:{str(v)}' for k, v in kwargs.items()))
             ))
             invocation_hash = hash(invocation_string)
-            if (cachedData := this._cache.getDataIfCached(invocation_hash)) is not None:
-                return cachedData
+            if (cached_data := this._cache.get_data_if_cached(invocation_hash)) is not None:
+                return cached_data
             function_result = func(*args, **kwargs)
-            this._cache.addData(invocation_hash, function_result, ttl, ttl_unit)
+            this._cache.add_data(invocation_hash, function_result, ttl, ttl_unit)
             return function_result
         return memoized_func
     else:
@@ -75,10 +75,10 @@ def memoize(func=None, ttl=None, ttl_unit=None):
                     '~'.join((f'{str(k)}:{str(v)}' for k, v in kwargs.items()))
                 ))
                 invocation_hash = hash(invocation_string)
-                if (cachedData := this._cache.getDataIfCached(invocation_hash)) is not None:
-                    return cachedData
+                if (cached_data := this._cache.get_data_if_cached(invocation_hash)) is not None:
+                    return cached_data
                 function_result = func(*args, **kwargs)
-                this._cache.addData(invocation_hash, function_result, ttl, ttl_unit)
+                this._cache.add_data(invocation_hash, function_result, ttl, ttl_unit)
                 return function_result
             return memoized_func
         return decorator
@@ -88,50 +88,50 @@ if __name__ == '__main__':
     from time import time, sleep
 
     @memoize
-    def slowGreetingGenerator(fname, lname, *args, **kwargs):
+    def slow_greeting_generator(fname, lname, *args, **kwargs):
         sleep(1)
         return f'Hello, {fname} {lname}'
 
     start = time()
-    slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34)
+    slow_greeting_generator('Daniel', 'Hjertholm', 'Developer', age=34)
     assert(time() - start >= 1)
 
     start = time()
-    slowGreetingGenerator('Daniel', 'Hjertholm', 'Developer', age=34)
+    slow_greeting_generator('Daniel', 'Hjertholm', 'Developer', age=34)
     assert(time() - start < 1)
 
     @memoize(ttl=1, ttl_unit=TTLUnit.CALL_COUNT)
-    def slowGreetingGenerator2(fname, lname, *args, **kwargs):
+    def slow_greeting_generator_2(fname, lname, *args, **kwargs):
         sleep(1)
         return f'Hello, {fname} {lname}'
 
     start = time()
-    slowGreetingGenerator2('Daniel', 'Hjertholm', 'Developer', age=34)
+    slow_greeting_generator_2('Daniel', 'Hjertholm', 'Developer', age=34)
     assert(time() - start >= 1)
 
     start = time()
-    slowGreetingGenerator2('Daniel', 'Hjertholm', 'Developer', age=34)
+    slow_greeting_generator_2('Daniel', 'Hjertholm', 'Developer', age=34)
     assert(time() - start < 1)
 
     start = time()
-    slowGreetingGenerator2('Daniel', 'Hjertholm', 'Developer', age=34)
+    slow_greeting_generator_2('Daniel', 'Hjertholm', 'Developer', age=34)
     assert(time() - start >= 1)
 
     @memoize(ttl=3, ttl_unit=TTLUnit.SECONDS)
-    def slowGreetingGenerator3(fname, lname, *args, **kwargs):
+    def slow_greeting_generator_3(fname, lname, *args, **kwargs):
         sleep(1)
         return f'Hello, {fname} {lname}'
 
     start = time()
-    slowGreetingGenerator3('Daniel', 'Hjertholm', 'Developer', age=34)
+    slow_greeting_generator_3('Daniel', 'Hjertholm', 'Developer', age=34)
     assert(time() - start >= 1)
 
     start = time()
-    slowGreetingGenerator3('Daniel', 'Hjertholm', 'Developer', age=34)
+    slow_greeting_generator_3('Daniel', 'Hjertholm', 'Developer', age=34)
     assert(time() - start < 1)
 
     sleep(3)
 
     start = time()
-    slowGreetingGenerator3('Daniel', 'Hjertholm', 'Developer', age=34)
+    slow_greeting_generator_3('Daniel', 'Hjertholm', 'Developer', age=34)
     assert(time() - start >= 1)
