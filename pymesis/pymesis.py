@@ -5,7 +5,7 @@ Memoization for Python, with optional TTL (measured in time or function call cou
 
 from sys import modules
 from enum import Enum
-from time import time
+import time
 
 
 class TTLUnit(Enum):
@@ -21,7 +21,7 @@ class Cache(dict):
             dataobj['ttl'] = ttl
             dataobj['ttl_unit'] = ttl_unit
         if ttl_unit in (TTLUnit.MINUTES, TTLUnit.SECONDS):
-            dataobj['timestamp'] = time()
+            dataobj['timestamp'] = time.time()
         self[hash] = dataobj
 
     def get_data_if_cached(self, hash):
@@ -38,7 +38,7 @@ class Cache(dict):
             return data
         elif dataobj['ttl_unit'] in (TTLUnit.SECONDS, TTLUnit.MINUTES):
             ttl_seconds = dataobj['ttl'] if dataobj['ttl_unit'] == TTLUnit.SECONDS else 60.0 * dataobj['ttl']
-            if time() - dataobj['timestamp'] < ttl_seconds:
+            if time.time() - dataobj['timestamp'] < ttl_seconds:
                 return data
             else:
                 del self[hash]
@@ -88,43 +88,3 @@ def memoize(func=None, ttl=None, ttl_unit=None):
                 return function_result
             return memoized_func
         return decorator
-
-
-if __name__ == '__main__':
-    from time import time, sleep
-
-    @memoize(ttl=1, ttl_unit=TTLUnit.CALL_COUNT)
-    def slow_greeting_generator_2(fname, lname, *args, **kwargs):
-        sleep(1)
-        return f'Hello, {fname} {lname}'
-
-    start = time()
-    slow_greeting_generator_2('Daniel', 'Hjertholm', 'Developer', age=34)
-    assert(time() - start >= 1)
-
-    start = time()
-    slow_greeting_generator_2('Daniel', 'Hjertholm', 'Developer', age=34)
-    assert(time() - start < 1)
-
-    start = time()
-    slow_greeting_generator_2('Daniel', 'Hjertholm', 'Developer', age=34)
-    assert(time() - start >= 1)
-
-    @memoize(ttl=3, ttl_unit=TTLUnit.SECONDS)
-    def slow_greeting_generator_3(fname, lname, *args, **kwargs):
-        sleep(1)
-        return f'Hello, {fname} {lname}'
-
-    start = time()
-    slow_greeting_generator_3('Daniel', 'Hjertholm', 'Developer', age=34)
-    assert(time() - start >= 1)
-
-    start = time()
-    slow_greeting_generator_3('Daniel', 'Hjertholm', 'Developer', age=34)
-    assert(time() - start < 1)
-
-    sleep(3)
-
-    start = time()
-    slow_greeting_generator_3('Daniel', 'Hjertholm', 'Developer', age=34)
-    assert(time() - start >= 1)
