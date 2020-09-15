@@ -3,10 +3,6 @@ from pymesis import _cache as pymesis_cache
 from unittest.mock import Mock
 
 
-def test_pytest():
-    assert True
-
-
 def test_cache():
     pymesis_cache.clear_cache()
 
@@ -30,10 +26,10 @@ def test_memoization_decorator_basic():
     second = func('arg')
 
     assert first == second
-    get_data.assert_called_once
+    get_data.call_count == 1
 
 
-def test_memoization_decorator_ttl_count():
+def test_memoization_decorator_ttl_count_1():
     pymesis_cache.clear_cache()
 
     get_data = Mock()
@@ -48,6 +44,22 @@ def test_memoization_decorator_ttl_count():
     third = func('arg')
 
     assert first == second == third
+    assert get_data.call_count == 2
+
+
+def test_memoization_decorator_ttl_count_100():
+    pymesis_cache.clear_cache()
+
+    get_data = Mock()
+    get_data.return_value = 'data'
+
+    @memoize(ttl=100, ttl_unit=TTLUnit.CALL_COUNT)
+    def func(param):
+        return get_data()
+
+    results = [func('arg') for i in range(102)]
+
+    assert all(('data' == result for result in results))
     assert get_data.call_count == 2
 
 
