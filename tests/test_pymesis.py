@@ -28,7 +28,23 @@ def test_memoization_decorator_basic():
     second = func('arg')
 
     assert first == second
-    get_data.call_count == 1
+    assert get_data.call_count == 1
+
+
+def test_memoization_decorator_different_args():
+    pymesis_cache.clear_cache()
+
+    get_data = Mock()
+    get_data.return_value = 'data'
+
+    @memoize
+    def func(param):
+        return get_data()
+
+    func('arg')
+    func('different arg')
+
+    assert get_data.call_count == 2
 
 
 def test_memoization_decorator_ttl_count_1():
