@@ -1,6 +1,8 @@
 from pymesis import memoize, TTLUnit
 from pymesis import _cache as pymesis_cache
 from unittest.mock import Mock
+import time
+import datetime
 
 
 def test_cache():
@@ -79,3 +81,70 @@ def test_memoization_decorator_ttl_count_0():
 
     assert first == second == third
     assert get_data.call_count == 3
+
+
+def test_memoization_decorator_ttl_seconds_1(monkeypatch):
+    pymesis_cache.clear_cache()
+
+    get_data = Mock()
+    get_data.return_value = 'data'
+
+    time.time = Mock()
+
+    @memoize(ttl=1, ttl_unit=TTLUnit.SECONDS)
+    def func(param):
+        return get_data()
+
+    time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:00', '%Y-%m-%d %H:%M:%S').timestamp()
+    first = func('arg')
+    time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:00', '%Y-%m-%d %H:%M:%S').timestamp()
+    second = func('arg')
+    time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:02', '%Y-%m-%d %H:%M:%S').timestamp()
+    third = func('arg')
+
+    assert first == second == third
+    assert get_data.call_count == 2
+
+
+def test_memoization_decorator_ttl_seconds_100(monkeypatch):
+    pymesis_cache.clear_cache()
+
+    get_data = Mock()
+    get_data.return_value = 'data'
+
+    time.time = Mock()
+
+    @memoize(ttl=100, ttl_unit=TTLUnit.SECONDS)
+    def func(param):
+        return get_data()
+
+    time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:00', '%Y-%m-%d %H:%M:%S').timestamp()
+    first = func('arg')
+    time.time.return_value = datetime.datetime.strptime('2020-09-15 19:01:35', '%Y-%m-%d %H:%M:%S').timestamp()
+    second = func('arg')
+    time.time.return_value = datetime.datetime.strptime('2020-09-15 19:01:41', '%Y-%m-%d %H:%M:%S').timestamp()
+    third = func('arg')
+
+    assert first == second == third
+    assert get_data.call_count == 2
+
+
+def test_memoization_decorator_ttl_seconds_0(monkeypatch):
+    pymesis_cache.clear_cache()
+
+    get_data = Mock()
+    get_data.return_value = 'data'
+
+    time.time = Mock()
+
+    @memoize(ttl=0, ttl_unit=TTLUnit.SECONDS)
+    def func(param):
+        return get_data()
+
+    time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:00', '%Y-%m-%d %H:%M:%S').timestamp()
+    first = func('arg')
+    time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:00', '%Y-%m-%d %H:%M:%S').timestamp()
+    second = func('arg')
+
+    assert first == second
+    assert get_data.call_count == 2
