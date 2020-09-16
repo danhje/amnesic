@@ -8,108 +8,84 @@ import datetime
 def test_cache():
     pymesis_cache.clear_cache()
 
-    original_data = 'data'
+    original_data = 'some data'
     pymesis_cache.add_data(hash('key'), original_data)
     retrieved_data = pymesis_cache.get_data_if_cached(hash('key'))
     assert retrieved_data == original_data
 
 
-def test_memoization_decorator_basic():
-    pymesis_cache.clear_cache()
-
-    get_data = Mock()
-    get_data.return_value = 'data'
+def test_memoization_decorator_basic(do_costly_stuff):
 
     @memoize
     def func(param):
-        return get_data()
+        return do_costly_stuff()
 
     first = func('arg')
     second = func('arg')
 
     assert first == second
-    assert get_data.call_count == 1
+    assert do_costly_stuff.call_count == 1
 
 
-def test_memoization_decorator_different_args():
-    pymesis_cache.clear_cache()
-
-    get_data = Mock()
-    get_data.return_value = 'data'
+def test_memoization_decorator_different_args(do_costly_stuff):
 
     @memoize
     def func(param):
-        return get_data()
+        return do_costly_stuff()
 
     func('arg')
     func('different arg')
 
-    assert get_data.call_count == 2
+    assert do_costly_stuff.call_count == 2
 
 
-def test_memoization_decorator_ttl_count_1():
-    pymesis_cache.clear_cache()
-
-    get_data = Mock()
-    get_data.return_value = 'data'
+def test_memoization_decorator_ttl_count_1(do_costly_stuff):
 
     @memoize(ttl=1, ttl_unit=TTLUnit.CALL_COUNT)
     def func(param):
-        return get_data()
+        return do_costly_stuff()
 
     first = func('arg')
     second = func('arg')
     third = func('arg')
 
     assert first == second == third
-    assert get_data.call_count == 2
+    assert do_costly_stuff.call_count == 2
 
 
-def test_memoization_decorator_ttl_count_100():
-    pymesis_cache.clear_cache()
-
-    get_data = Mock()
-    get_data.return_value = 'data'
+def test_memoization_decorator_ttl_count_100(do_costly_stuff):
 
     @memoize(ttl=100, ttl_unit=TTLUnit.CALL_COUNT)
     def func(param):
-        return get_data()
+        return do_costly_stuff()
 
     results = [func('arg') for i in range(102)]
 
-    assert all(('data' == result for result in results))
-    assert get_data.call_count == 2
+    assert all(('some data' == result for result in results))
+    assert do_costly_stuff.call_count == 2
 
 
-def test_memoization_decorator_ttl_count_0():
-    pymesis_cache.clear_cache()
-
-    get_data = Mock()
-    get_data.return_value = 'data'
+def test_memoization_decorator_ttl_count_0(do_costly_stuff):
 
     @memoize(ttl=0, ttl_unit=TTLUnit.CALL_COUNT)
     def func(param):
-        return get_data()
+        return do_costly_stuff()
 
     first = func('arg')
     second = func('arg')
     third = func('arg')
 
     assert first == second == third
-    assert get_data.call_count == 3
+    assert do_costly_stuff.call_count == 3
 
 
-def test_memoization_decorator_ttl_seconds_1(monkeypatch):
-    pymesis_cache.clear_cache()
-
-    get_data = Mock()
-    get_data.return_value = 'data'
+def test_memoization_decorator_ttl_seconds_1(do_costly_stuff):
 
     time.time = Mock()
 
     @memoize(ttl=1, ttl_unit=TTLUnit.SECONDS)
     def func(param):
-        return get_data()
+        return do_costly_stuff()
 
     time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:00', '%Y-%m-%d %H:%M:%S').timestamp()
     first = func('arg')
@@ -119,20 +95,16 @@ def test_memoization_decorator_ttl_seconds_1(monkeypatch):
     third = func('arg')
 
     assert first == second == third
-    assert get_data.call_count == 2
+    assert do_costly_stuff.call_count == 2
 
 
-def test_memoization_decorator_ttl_seconds_100(monkeypatch):
-    pymesis_cache.clear_cache()
-
-    get_data = Mock()
-    get_data.return_value = 'data'
+def test_memoization_decorator_ttl_seconds_100(do_costly_stuff):
 
     time.time = Mock()
 
     @memoize(ttl=100, ttl_unit=TTLUnit.SECONDS)
     def func(param):
-        return get_data()
+        return do_costly_stuff()
 
     time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:00', '%Y-%m-%d %H:%M:%S').timestamp()
     first = func('arg')
@@ -142,20 +114,16 @@ def test_memoization_decorator_ttl_seconds_100(monkeypatch):
     third = func('arg')
 
     assert first == second == third
-    assert get_data.call_count == 2
+    assert do_costly_stuff.call_count == 2
 
 
-def test_memoization_decorator_ttl_seconds_0(monkeypatch):
-    pymesis_cache.clear_cache()
-
-    get_data = Mock()
-    get_data.return_value = 'data'
+def test_memoization_decorator_ttl_seconds_0(do_costly_stuff):
 
     time.time = Mock()
 
     @memoize(ttl=0, ttl_unit=TTLUnit.SECONDS)
     def func(param):
-        return get_data()
+        return do_costly_stuff()
 
     time.time.return_value = datetime.datetime.strptime('2020-09-15 19:00:00', '%Y-%m-%d %H:%M:%S').timestamp()
     first = func('arg')
@@ -163,4 +131,4 @@ def test_memoization_decorator_ttl_seconds_0(monkeypatch):
     second = func('arg')
 
     assert first == second
-    assert get_data.call_count == 2
+    assert do_costly_stuff.call_count == 2
