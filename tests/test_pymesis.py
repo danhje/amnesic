@@ -79,6 +79,20 @@ def test_memoization_decorator_ttl_count_0(do_costly_stuff):
     assert do_costly_stuff.call_count == 3
 
 
+def test_memoization_decorator_ttl_count_negative(do_costly_stuff):
+
+    @memoize(ttl=-1, ttl_unit=TTLUnit.CALL_COUNT)
+    def func(param):
+        return do_costly_stuff()
+
+    first = func('arg')
+    second = func('arg')
+    third = func('arg')
+
+    assert first == second == third
+    assert do_costly_stuff.call_count == 3
+
+
 def test_memoization_decorator_ttl_seconds_1(do_costly_stuff):
 
     time.time = Mock()
