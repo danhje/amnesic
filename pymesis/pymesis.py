@@ -25,17 +25,23 @@ class Cache(dict):
         self[hash] = dataobj
 
     def get_data_if_cached(self, hash):
+
         if hash not in self:
             return None
+
         dataobj = self[hash]
         data = dataobj['data']
+
         if 'ttl' not in dataobj or 'ttl_unit' not in dataobj:
             return data
+
         if dataobj['ttl_unit'] == TTLUnit.CALL_COUNT:
-            dataobj['ttl'] -= 1
             if dataobj['ttl'] <= 0:
                 del self[hash]
+                return None
+            dataobj['ttl'] -= 1
             return data
+
         elif dataobj['ttl_unit'] in (TTLUnit.SECONDS, TTLUnit.MINUTES):
             ttl_seconds = dataobj['ttl'] if dataobj['ttl_unit'] == TTLUnit.SECONDS else 60.0 * dataobj['ttl']
             if time.time() - dataobj['timestamp'] < ttl_seconds:
@@ -43,6 +49,7 @@ class Cache(dict):
             else:
                 del self[hash]
                 return None
+
         else:
             raise ValueError(f'Unknown ttl_unit: {dataobj["ttl_unit"]}')
 
