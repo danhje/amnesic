@@ -22,6 +22,11 @@ setup(
     maintainer='Daniel Hjertholm',
     maintainer_email='danhje@gmail.com',
     python_requires='>=3.8',
+    extras_require={
+        'dev': [
+            'pytest',
+        ]
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
