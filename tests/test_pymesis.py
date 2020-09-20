@@ -1,6 +1,7 @@
 from pymesis import memoize, TTLUnit
 from pymesis import _cache as pymesis_cache
 from unittest.mock import Mock
+import math
 import time
 import datetime
 
@@ -145,4 +146,26 @@ def test_memoization_decorator_ttl_seconds_0(do_costly_stuff):
     second = func('arg')
 
     assert first == second
+    assert do_costly_stuff.call_count == 2
+
+
+def test_memoization_decorator_on_method(do_costly_stuff):
+
+    class Circle:
+
+        def __init__(self, radius):
+            self._radius = radius
+
+        @memoize
+        def area(self):
+            do_costly_stuff()
+            return math.pi * self._radius ** 2
+
+    circle_1 = Circle(10)
+    circle_2 = Circle(15)
+
+    circle_1_area = circle_1.area()
+    circle_2_area = circle_2.area()
+
+    assert circle_1_area != circle_2_area
     assert do_costly_stuff.call_count == 2
