@@ -149,7 +149,28 @@ def test_memoization_decorator_ttl_seconds_0(do_costly_stuff):
     assert do_costly_stuff.call_count == 2
 
 
-def test_memoization_decorator_on_method(do_costly_stuff):
+def test_memoization_decorator_on_method_same_instance(do_costly_stuff):
+
+    class Circle:
+
+        def __init__(self, radius):
+            self._radius = radius
+
+        @memoize
+        def area(self):
+            do_costly_stuff()
+            return math.pi * self._radius ** 2
+
+    circle = Circle(10)
+
+    first_result = circle.area()
+    second_result = circle.area()
+
+    assert first_result == second_result
+    assert do_costly_stuff.call_count == 1
+
+
+def test_memoization_decorator_on_method_different_instance(do_costly_stuff):
 
     class Circle:
 
