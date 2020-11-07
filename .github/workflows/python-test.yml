@@ -37,7 +37,7 @@ jobs:
         pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pipenv run pytest --cov-report=html --cov=pymesis
+        pipenv run pytest --cov-report=xml --cov=pymesis
     - name: Upload coverage report
       if: success()
       run: |
