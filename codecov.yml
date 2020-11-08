@@ -1,3 +1,6 @@
+# To validate:
+#   cat codecov.yml | curl --data-binary @- https://codecov.io/validate
+
 codecov:
     require_ci_to_pass: yes
   
@@ -21,3 +24,4 @@ comment:
 
 fixes:
     - "/Users/danhje/Library/Mobile Documents/com~apple~CloudDocs/Code/pymesis/::"
+    - "/home/runner/work/pymesis/::"
