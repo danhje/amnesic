@@ -3,3 +3,4 @@
 
 codecov:
     max_report_age: off
+    disable_default_path_fixes: false
