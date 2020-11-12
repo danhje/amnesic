@@ -1,6 +1,12 @@
 # pymesis
 Memoization decorator for Python, with optional TTL (measured in time or function calls) for the cached results.
 
+![Testing and linting](https://github.com/danhje/pymesis/workflows/Test%20And%20Lint/badge.svg)
+[![codecov](https://codecov.io/gh/danhje/pymesis/branch/master/graph/badge.svg)](https://codecov.io/gh/danhje/pymesis)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/danhje/pymesis?include_prereleases)
+![PyPI](https://img.shields.io/pypi/v/pymesis)
+
+
 ## Installation
 
 Using pipenv (recommended):
