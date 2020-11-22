@@ -1,6 +1,7 @@
 from pymesis import memoize, TTLUnit
 from pymesis import _cache as pymesis_cache
 from unittest.mock import Mock
+import pytest
 import math
 import time
 import datetime
@@ -190,3 +191,14 @@ def test_memoization_decorator_on_method_different_instance(do_costly_stuff):
 
     assert circle_1_area != circle_2_area
     assert do_costly_stuff.call_count == 2
+
+
+def test_invalid_TTL_unit_raises_ValueError():
+
+    @memoize(ttl=1, ttl_unit='minutes')
+    def func(param):
+        return 'data'
+
+    with pytest.raises(ValueError) as excinfo:
+        first = func('arg')
+        second = func('arg')

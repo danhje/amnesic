@@ -51,7 +51,7 @@ class Cache(dict):
                 return None
 
         else:
-            raise ValueError(f'Unknown ttl_unit: {dataobj["ttl_unit"]}')
+            raise ValueError(f"Unknown ttl_unit. Expected one of the enumeration members TTLUnit.SECONDS, TTLUnit.MINUTES or TTLUnit.CALL_COUNT, but got {type(dataobj['ttl_unit'])} with value '{dataobj['ttl_unit']}'.")
 
     def clear_cache(self):
         self.clear()
