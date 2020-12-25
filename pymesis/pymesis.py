@@ -6,6 +6,7 @@ Memoization for Python, with optional TTL (measured in time or function call cou
 from sys import modules
 from enum import Enum
 import time
+from typing import Any, Optional, Callable
 
 
 class TTLUnit(Enum):
@@ -15,7 +16,7 @@ class TTLUnit(Enum):
 
 
 class Cache(dict):
-    def add_data(self, hash, data, ttl=None, ttl_unit=TTLUnit.SECONDS):
+    def add_data(self, hash: int, data: Any, ttl: Optional[int] = None, ttl_unit: Optional[TTLUnit] = TTLUnit.SECONDS) -> None:
         dataobj = {'data': data}
         if ttl is not None and ttl_unit is not None:
             dataobj['ttl'] = ttl
@@ -24,7 +25,7 @@ class Cache(dict):
             dataobj['timestamp'] = time.time()
         self[hash] = dataobj
 
-    def get_data_if_cached(self, hash):
+    def get_data_if_cached(self, hash: int) -> Any:
 
         if hash not in self:
             return None
@@ -53,7 +54,7 @@ class Cache(dict):
         else:
             raise ValueError(f"Unknown ttl_unit. Expected one of the enumeration members TTLUnit.SECONDS, TTLUnit.MINUTES or TTLUnit.CALL_COUNT, but got {type(dataobj['ttl_unit'])} with value '{dataobj['ttl_unit']}'.")
 
-    def clear_cache(self):
+    def clear_cache(self) -> None:
         self.clear()
 
 
@@ -61,7 +62,7 @@ this = modules[__name__]
 this._cache = Cache()
 
 
-def memoize(func=None, ttl=None, ttl_unit=None):
+def memoize(func: Optional[Callable] = None, ttl: Optional[int] = None, ttl_unit: Optional[TTLUnit] = None) -> Callable:
     if func is not None:
         def memoized_func(*args, **kwargs):
             invocation_string = '~'.join((
@@ -77,7 +78,7 @@ def memoize(func=None, ttl=None, ttl_unit=None):
             return function_result
         return memoized_func
     else:
-        def decorator(func):
+        def decorator(func: Callable) -> Callable:
             if ttl <= 0:  # No decorating needed
                 return func
 
