@@ -18,9 +18,9 @@ setup(
              'faster function calls result return value performance optimization',
     url='https://github.com/danhje/pymesis',
     author='Daniel Hjertholm',
-    author_email='danhje@gmail.com',
+    author_email='daniel.hjertholm@icloud.com',
     maintainer='Daniel Hjertholm',
-    maintainer_email='danhje@gmail.com',
+    maintainer_email='daniel.hjertholm@icloud.com',
     python_requires='>=3.8',
     extras_require={
         'dev': [
