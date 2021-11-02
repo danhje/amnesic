@@ -1,8 +1,7 @@
-from pymesis import memoize, TTLUnit
-from pymesis import _cache as pymesis_cache
-from hypothesis import given, settings, assume
 import hypothesis.strategies as st
+from hypothesis import given
 
+from pymesis import _cache as pymesis_cache
 
 strategies = (
     st.integers(),
@@ -19,7 +18,7 @@ strategies = (
     st.fractions(),
     st.functions(),
     st.iterables(st.text()),
-    st.none()
+    st.none(),
 )
 
 
@@ -27,7 +26,7 @@ strategies = (
 def test_cache(data):
     pymesis_cache.clear_cache()
 
-    pymesis_cache.add_data(hash('key'), data)
-    retrieved_data = pymesis_cache.get_data_if_cached(hash('key'))
+    pymesis_cache.add_data(hash("key"), data)
+    retrieved_data = pymesis_cache.get_data_if_cached(hash("key"))
 
     assert retrieved_data == data
