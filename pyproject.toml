@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "pymesis"
+version = "0.2.0"
+description = "Memoization decorator for Python, with optional TTL"
+authors = ["Daniel Hjertholm <daniel.hjertholm@icloud.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.8, <=3.10"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest-cov = "^3.0.0"
+hypothesis = "^6.24.1"
+pre-commit = "^2.15.0"
+
+[tool.isort]
+profile = "black"
+line_length = 100
+known_first_party = []
+
+[tool.black]
+line-length = 100
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | profiling
+)/
+'''
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

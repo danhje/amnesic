@@ -1,28 +1,32 @@
-"""
-Memoization for Python, with optional TTL (measured in time or function call count) for the cached results.
-"""
+"""Memoization for Python, with optional TTL (measured in time or function call count)."""
 
 
-from sys import modules
-from enum import Enum
 import time
-from typing import Any, Optional, Callable
+from enum import Enum
+from sys import modules
+from typing import Any, Callable, Optional
 
 
 class TTLUnit(Enum):
-    SECONDS = 'seconds'
-    MINUTES = 'minutes'
-    CALL_COUNT = 'call_count'
+    SECONDS = "seconds"
+    MINUTES = "minutes"
+    CALL_COUNT = "call_count"
 
 
 class Cache(dict):
-    def add_data(self, hash: int, data: Any, ttl: Optional[int] = None, ttl_unit: Optional[TTLUnit] = TTLUnit.SECONDS) -> None:
-        dataobj = {'data': data}
+    def add_data(
+        self,
+        hash: int,
+        data: Any,
+        ttl: Optional[int] = None,
+        ttl_unit: Optional[TTLUnit] = TTLUnit.SECONDS,
+    ) -> None:
+        dataobj = {"data": data}
         if ttl is not None and ttl_unit is not None:
-            dataobj['ttl'] = ttl
-            dataobj['ttl_unit'] = ttl_unit
+            dataobj["ttl"] = ttl
+            dataobj["ttl_unit"] = ttl_unit
         if ttl_unit in (TTLUnit.MINUTES, TTLUnit.SECONDS):
-            dataobj['timestamp'] = time.time()
+            dataobj["timestamp"] = time.time()
         self[hash] = dataobj
 
     def get_data_if_cached(self, hash: int) -> Any:
@@ -31,28 +35,34 @@ class Cache(dict):
             return None
 
         dataobj = self[hash]
-        data = dataobj['data']
+        data = dataobj["data"]
 
-        if 'ttl' not in dataobj or 'ttl_unit' not in dataobj:
+        if "ttl" not in dataobj or "ttl_unit" not in dataobj:
             return data
 
-        if dataobj['ttl_unit'] == TTLUnit.CALL_COUNT:
-            if dataobj['ttl'] <= 0:
+        if dataobj["ttl_unit"] == TTLUnit.CALL_COUNT:
+            if dataobj["ttl"] <= 0:
                 del self[hash]
                 return None
-            dataobj['ttl'] -= 1
+            dataobj["ttl"] -= 1
             return data
 
-        elif dataobj['ttl_unit'] in (TTLUnit.SECONDS, TTLUnit.MINUTES):
-            ttl_seconds = dataobj['ttl'] if dataobj['ttl_unit'] == TTLUnit.SECONDS else 60.0 * dataobj['ttl']
-            if time.time() - dataobj['timestamp'] < ttl_seconds:
+        elif dataobj["ttl_unit"] in (TTLUnit.SECONDS, TTLUnit.MINUTES):
+            ttl_seconds = (
+                dataobj["ttl"] if dataobj["ttl_unit"] == TTLUnit.SECONDS else 60.0 * dataobj["ttl"]
+            )
+            if time.time() - dataobj["timestamp"] < ttl_seconds:
                 return data
             else:
                 del self[hash]
                 return None
 
         else:
-            raise ValueError(f"Unknown ttl_unit. Expected one of the enumeration members TTLUnit.SECONDS, TTLUnit.MINUTES or TTLUnit.CALL_COUNT, but got {type(dataobj['ttl_unit'])} with value '{dataobj['ttl_unit']}'.")
+            raise ValueError(
+                "Unknown ttl_unit. Expected one of the enumeration members TTLUnit.SECONDS, "
+                f"TTLUnit.MINUTES or TTLUnit.CALL_COUNT, but got {type(dataobj['ttl_unit'])} "
+                f"with value '{dataobj['ttl_unit']}'."
+            )
 
     def clear_cache(self) -> None:
         self.clear()
@@ -62,37 +72,50 @@ this = modules[__name__]
 this._cache = Cache()
 
 
-def memoize(func: Optional[Callable] = None, ttl: Optional[int] = None, ttl_unit: Optional[TTLUnit] = None) -> Callable:
+def memoize(
+    func: Optional[Callable] = None,
+    ttl: Optional[int] = None,
+    ttl_unit: Optional[TTLUnit] = None,
+) -> Callable:
     if func is not None:
+
         def memoized_func(*args, **kwargs):
-            invocation_string = '~'.join((
-                func.__name__,
-                '~'.join((str(arg) for arg in args)),
-                '~'.join((f'{str(k)}:{str(v)}' for k, v in kwargs.items()))
-            ))
+            invocation_string = "~".join(
+                (
+                    func.__name__,
+                    "~".join((str(arg) for arg in args)),
+                    "~".join((f"{str(k)}:{str(v)}" for k, v in kwargs.items())),
+                )
+            )
             invocation_hash = hash(invocation_string)
             if (cached_data := this._cache.get_data_if_cached(invocation_hash)) is not None:
                 return cached_data
             function_result = func(*args, **kwargs)
             this._cache.add_data(invocation_hash, function_result, ttl, ttl_unit)
             return function_result
+
         return memoized_func
     else:
+
         def decorator(func: Callable) -> Callable:
             if ttl <= 0:  # No decorating needed
                 return func
 
             def memoized_func(*args, **kwargs):
-                invocation_string = '~'.join((
-                    func.__name__,
-                    '~'.join((str(arg) for arg in args)),
-                    '~'.join((f'{str(k)}:{str(v)}' for k, v in kwargs.items()))
-                ))
+                invocation_string = "~".join(
+                    (
+                        func.__name__,
+                        "~".join((str(arg) for arg in args)),
+                        "~".join((f"{str(k)}:{str(v)}" for k, v in kwargs.items())),
+                    )
+                )
                 invocation_hash = hash(invocation_string)
                 if (cached_data := this._cache.get_data_if_cached(invocation_hash)) is not None:
                     return cached_data
                 function_result = func(*args, **kwargs)
                 this._cache.add_data(invocation_hash, function_result, ttl, ttl_unit)
                 return function_result
+
             return memoized_func
+
         return decorator

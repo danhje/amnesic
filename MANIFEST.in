@@ -1,4 +1,0 @@
-include *.lock
-include LICENSE
-include Pipfile
-recursive-include pymesis *.py

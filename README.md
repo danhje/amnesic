@@ -74,7 +74,7 @@ print(f'Time elapsed: {time() - start :.1f} seconds\n')  # Third call is slow, a
 
 Note that functions are assumed to be unchanged as long as the name is unchanged. Redefined function (with decorator applied again) will return cached result of similar call to the original function.
 
-The decorator works with methods as well as functions. Note that the same method on two different instances of the same class are considered different methods, therefore a call to the second will not give the cached result from the first. 
+The decorator works with methods as well as functions. Note that the same method on two different instances of the same class are considered different methods, therefore a call to the second will not give the cached result from the first.
 
 <!--
 TODO:
